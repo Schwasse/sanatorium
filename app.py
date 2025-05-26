@@ -10,7 +10,7 @@ from flask import request
 from config import UPLOAD_FOLDER
 from flask import current_app
 from PIL import Image
-from evaluation import evaluate_sanatoriums, auto_score_sanatoriums  # Добавьте этот импорт
+from evaluation import evaluate_sanatoriums, auto_score_sanatoriums  
 
 app = Flask(__name__)
 app.config.from_object(Config)
