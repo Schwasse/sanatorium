@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Добавить новый санаторий</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% for error in form.name.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                {{ form.country.label(class="form-label") }}
+                {{ form.country(class="form-control") }}
+                {% for error in form.country.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {{ form.region.label(class="form-label") }}
+                {{ form.region(class="form-control") }}
+                {% for error in form.region.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {{ form.resort.label(class="form-label") }}
+                {{ form.resort(class="form-control") }}
+                {% for error in form.resort.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                {{ form.specialization.label(class="form-label") }}
+                {{ form.specialization(class="form-control") }}
+                {% for error in form.specialization.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.room_types.label(class="form-label") }}
+                {{ form.room_types(class="form-control") }}
+                {% for error in form.room_types.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form.equipment.label(class="form-label") }}
+            {{ form.equipment(class="form-control", rows=3) }}
+            {% for error in form.equipment.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.attractions_distance.label(class="form-label") }}
+            {{ form.attractions_distance(class="form-control") }}
+            {% for error in form.attractions_distance.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control", rows=4) }}
+            {% for error in form.description.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                {{ form.price_per_night.label(class="form-label") }}
+                {{ form.price_per_night(class="form-control") }}
+                {% for error in form.price_per_night.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {{ form.rating.label(class="form-label") }}
+                {{ form.rating(class="form-control") }}
+                {% for error in form.rating.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {{ form.food_type.label(class="form-label") }}
+                {{ form.food_type(class="form-control") }}
+                {% for error in form.food_type.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                {{ form.phone.label(class="form-label") }}
+                {{ form.phone(class="form-control") }}
+                {% for error in form.phone.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+                {% for error in form.email.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {{ form.website.label(class="form-label") }}
+                {{ form.website(class="form-control") }}
+                {% for error in form.website.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <h5>Удобства</h5>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_wifi(class="form-check-input") }}
+                    {{ form.has_wifi.label(class="form-check-label") }}
+                </div>
+                <div class="form-check">
+                    {{ form.has_tv(class="form-check-input") }}
+                    {{ form.has_tv.label(class="form-check-label") }}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_ac(class="form-check-input") }}
+                    {{ form.has_ac.label(class="form-check-label") }}
+                </div>
+                <div class="form-check">
+                    {{ form.has_minibar(class="form-check-input") }}
+                    {{ form.has_minibar.label(class="form-check-label") }}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_safe(class="form-check-input") }}
+                    {{ form.has_safe.label(class="form-check-label") }}
+                </div>
+                <div class="form-check">
+                    {{ form.has_balcony(class="form-check-input") }}
+                    {{ form.has_balcony.label(class="form-check-label") }}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_pool(class="form-check-input") }}
+                    {{ form.has_pool.label(class="form-check-label") }}
+                </div>
+                <div class="form-check">
+                    {{ form.has_spa(class="form-check-input") }}
+                    {{ form.has_spa.label(class="form-check-label") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form.photo.label(class="form-label") }}
+            {{ form.photo(class="form-control") }}
+            {% for error in form.photo.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

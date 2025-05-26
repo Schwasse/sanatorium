@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Санатории</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="container mt-3">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<!-- Основной контент -->
+<main class="flex-grow-1">
+    {% block content %}
+    <header class="py-3 mb-4 border-bottom">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                    <use xlink:href="#bootstrap"/>
+                </svg>
+                <span class="fs-4">Санатории</span>
+            </a>
+
+            <ul class="nav me-auto ms-auto justify-content-center">
+                <li><a href="#" class="nav-link px-3 link-secondary">Главная</a></li>
+                <li><a href="{{ url_for('ahp_priorities') }}" class="nav-link px-3">Мои приоритеты</a></li>
+                <li><a href="{{ url_for('recommend_sanatoriums') }}" class="nav-link px-3">Рекомендации</a></li>
+            </ul>
+            <div class="text-end">
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-primary me-2">Мой профиль</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Выйти</a>
+                {% if session.get('is_admin') %}
+
+                <a href="{{ url_for('add_sanatorium') }}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Добавить санаторий
+                </a>
+
+                {% endif %}
+                {% else %}
+                <a href="{{ url_for('entrance') }}" class="btn btn-outline-primary me-2">Войти</a>
+                <a href="{{ url_for('register') }}" class="btn btn-primary">Зарегистрироваться</a>
+                <button class="btn btn-outline-secondary" onclick="adminLogin()">Войти как админ</button>
+                {% endif %}
+            </div>
+
+        </div>
+    </header>
+
+
+    <div class="container mt-4">
+        <h1>Все санатории</h1>
+
+        <!-- Фильтры -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('index') }}">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Сортировать по цене:</label>
+                            <select class="form-select" name="sort">
+                                <option value="">Без сортировки</option>
+                                <option value="asc" {% if request.args.get(
+                                'sort') == 'asc' %}selected{% endif %}>По возрастанию</option>
+                                <option value="desc" {% if request.args.get(
+                                'sort') == 'desc' %}selected{% endif %}>По убыванию</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Регион:</label>
+                            <select class="form-select" name="region">
+                                <option value="">Все</option>
+                                {% for region in regions %}
+                                <option value="{{ region }}" {% if request.args.get(
+                                'region') == region %}selected{% endif %}>{{ region }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Тип санатория:</label>
+                            <select class="form-select" name="type">
+                                <option value="">Все</option>
+                                {% for type in types %}
+                                <option value="{{ type }}" {% if request.args.get(
+                                'type') == type %}selected{% endif %}>{{ type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Услуги:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="pool" id="pool" {% if
+                                       request.args.get('pool') %}checked{% endif %}>
+                                <label class="form-check-label" for="pool">Бассейн</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="spa" id="spa" {% if
+                                       request.args.get('spa') %}checked{% endif %}>
+                                <label class="form-check-label" for="spa">Спа</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="entertainment" id="entertainment"
+                                       {% if request.args.get('entertainment') %}checked{% endif %}>
+                                <label class="form-check-label" for="entertainment">Развлечения</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Применить</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Список санаториев -->
+        {% for sanatorium in sanatoriums %}
+        <a href="{{ url_for('sanatorium_detail', id=sanatorium.id) }}" class="text-decoration-none text-dark">
+            <div class="card mb-3">
+                <div class="row g-0 h-100"> <!-- Добавлен h-100 для row -->
+                    {% if sanatorium.photo_filename %}
+                    <div class="col-md-4 d-flex align-items-stretch"> <!-- Добавлены flex-классы -->
+                        <img src="{{ url_for('static', filename='uploads/' + sanatorium.photo_filename) }}"
+                             alt="Фото {{ sanatorium.name }}"
+                             class="img-fluid rounded-start h-100 w-100"
+                             style="object-fit: cover; object-position: center;">
+                    </div>
+                    {% endif %}
+                    <div class="col-md-8 d-flex flex-column"> <!-- Добавлен flex-column -->
+                        <div class="card-body d-flex flex-column h-100"> <!-- Добавлены flex-классы -->
+                            <div class="flex-grow-1"> <!-- Контент растягивается -->
+                                <h2 class="card-title">{{ sanatorium.name }}</h2>
+                                <p class="card-text"><strong>Страна:</strong> {{ sanatorium.country }}</p>
+                                <p class="card-text"><strong>Питание:</strong> {{ sanatorium.food_type }}</p>
+                                <p class="card-text">
+                                    <strong>Удобства:</strong>
+                                    {% if sanatorium.has_wifi %}Wi-Fi, {% endif %}
+                                    {% if sanatorium.has_tv %}Телевизор, {% endif %}
+                                    {% if sanatorium.has_ac %}Кондиционер, {% endif %}
+                                    {% if sanatorium.has_minibar %}Мини-бар, {% endif %}
+                                    {% if sanatorium.has_safe %}Сейф, {% endif %}
+                                    {% if sanatorium.has_balcony %}Балкон{% endif %}
+                                </p>
+                                <p class="card-text"><strong>Рейтинг:</strong> {{ sanatorium.rating }}</p>
+                                <p class="card-text"><strong>Телефон:</strong> {{ sanatorium.phone }}</p>
+                                <p class="card-text"><strong>Email:</strong> <a href="mailto:{{ sanatorium.email }}">{{
+                                    sanatorium.email }}</a></p>
+                                <p class="card-text"><strong>Сайт:</strong> <a href="{{ sanatorium.website }}"
+                                                                               target="_blank">{{ sanatorium.website
+                                    }}</a></p>
+                            </div>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="text-primary mb-0">{{ sanatorium.price_per_night }} ₽</h4>
+                                    {% if session.get('is_admin') %}  <!-- Изменили условие на проверку is_admin -->
+                                    <div class="admin-actions">
+                                        <a href="{{ url_for('edit_sanatorium', id=sanatorium.id) }}"
+                                           class="btn btn-warning btn-sm">Редактировать</a>
+                                        <form action="{{ url_for('delete_sanatorium', id=sanatorium.id) }}"
+                                              method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Удалить этот санаторий?')">Удалить
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        {% endfor %}
+    </div>
+    {% endblock %}
+</main>
+
+<!-- Подвал -->
+<footer class="bg-light text-center text-lg-start py-3 border-top">
+    <div class="container">
+        <span class="text-muted">© 2025 Санатории. Все права защищены.</span>
+    </div>
+</footer>
+
+</body>
+<script>
+function adminLogin() {
+    const password = prompt("Введите пароль администратора:");
+    if (password === "1234") {
+        fetch("{{ url_for('admin_login') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ password })
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Перенаправляем на страницу добавления санатория
+                  window.location.href = data.redirect;
+              } else {
+                  alert("Неверный пароль.");
+              }
+          });
+    } else if (password !== null) {
+        alert("Неверный пароль.");
+    }
+}
+
+
+
+</script>
+</html>

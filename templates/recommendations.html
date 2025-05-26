@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Рекомендации санаториев</h1>
+
+    {% for rec in recommendations %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>{{ rec.sanatorium.name }}</h2>
+                    <p class="text-muted">{{ rec.sanatorium.region }}</p>
+
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success"
+                             style="width: {{ rec.normalized_score }}%">
+                            Общая оценка: {{ rec.normalized_score }}%
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        {% for criterion, score in rec.criteria_scores.items() %}
+                        <div class="col-md-4 mb-2">
+                            <strong>{{ criterion|capitalize }}:</strong>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar"
+                                     style="width: {{ (score/5)*100 }}%">
+                                    {{ score }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h3 class="text-primary">{{ rec.sanatorium.price_per_night }} ₽</h3>
+                    <p><small>за ночь</small></p>
+                    <a href="{{ url_for('sanatorium_detail', id=rec.sanatorium.id) }}"
+                       class="btn btn-primary">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

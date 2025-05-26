@@ -1,0 +1,49 @@
+<!-- templates/sanatorium_detail.html -->
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ sanatorium.name }} — подробности</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">← Назад к списку</a>
+
+    <div class="row">
+        <!-- Левая колонка: Фото и контакты -->
+        <div class="col-md-4">
+            {% if sanatorium.photo_filename %}
+            <img src="{{ url_for('static', filename='uploads/' + sanatorium.photo_filename) }}"
+                 class="img-fluid rounded mb-3" alt="{{ sanatorium.name }}">
+            {% endif %}
+            <h4 class="text-primary">{{ sanatorium.price_per_night }} ₽ / ночь</h4>
+            <p><strong>Телефон:</strong> {{ sanatorium.phone }}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{ sanatorium.email }}">{{ sanatorium.email }}</a></p>
+            <p><strong>Сайт:</strong> <a href="{{ sanatorium.website }}" target="_blank">{{ sanatorium.website }}</a></p>
+        </div>
+
+        <!-- Правая колонка: Подробная информация -->
+        <div class="col-md-8">
+            <h2>{{ sanatorium.name }}</h2>
+            <p><strong>Страна:</strong> {{ sanatorium.country }}</p>
+            <p><strong>Регион:</strong> {{ sanatorium.region }}</p>
+            <p><strong>Курорт:</strong> {{ sanatorium.resort }}</p>
+            <p><strong>Специализация:</strong> {{ sanatorium.specialization }}</p>
+            <p><strong>Оборудование:</strong> {{ sanatorium.equipment }}</p>
+            <p><strong>Типы номеров:</strong> {{ sanatorium.room_types }}</p>
+            <p><strong>Удобства:</strong>
+                {% if sanatorium.has_wifi %}Wi-Fi, {% endif %}
+                {% if sanatorium.has_tv %}Телевизор, {% endif %}
+                {% if sanatorium.has_ac %}Кондиционер, {% endif %}
+                {% if sanatorium.has_minibar %}Мини-бар, {% endif %}
+                {% if sanatorium.has_safe %}Сейф, {% endif %}
+                {% if sanatorium.has_balcony %}Балкон{% endif %}
+            </p>
+            <p><strong>Питание:</strong> {{ sanatorium.food_type }}</p>
+            <p><strong>До ближайших достопримечательностей:</strong> {{ sanatorium.attractions_distance }}</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
